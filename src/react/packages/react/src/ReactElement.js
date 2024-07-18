@@ -361,7 +361,7 @@ export function jsxDEV(type, config, maybeKey, source, self) {
  */
 export function createElement(type, config, children) {
   let propName;
-
+  console.log('createElement被调用了');
   // Reserved names are extracted
   const props = {};
 

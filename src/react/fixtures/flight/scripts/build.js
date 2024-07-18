@@ -51,6 +51,7 @@ const config = configFactory('production');
 
 // We require that you explicitly set browsers and do not fall back to
 // browserslist defaults.
+// react-dev-utils 是一个由 Create React App 团队维护的工具包
 const {checkBrowsers} = require('react-dev-utils/browsersHelper');
 checkBrowsers(paths.appPath, isInteractive)
   .then(() => {
