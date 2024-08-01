@@ -125,6 +125,7 @@ function FiberRootNode(
   }
 }
 
+/** @desc 创建fiber节点 */
 export function createFiberRoot(
   containerInfo: any,
   tag: RootTag,
@@ -132,7 +133,7 @@ export function createFiberRoot(
   initialChildren: ReactNodeList,
   hydrationCallbacks: null | SuspenseHydrationCallbacks,
   isStrictMode: boolean,
-  concurrentUpdatesByDefaultOverride: null | boolean,
+  concurrentUpdatesByDefaultOverride: null | boolean,//控制是否默认启用并发更新。
   // TODO: We have several of these arguments that are conceptually part of the
   // host config, but because they are passed in at runtime, we have to thread
   // them through the root constructor. Perhaps we should put them all into a
@@ -141,7 +142,9 @@ export function createFiberRoot(
   onRecoverableError: null | ((error: mixed) => void),
   transitionCallbacks: null | TransitionTracingCallbacks,
 ): FiberRoot {
-  console.log('createFiberRoot参数(containerInfo, tag, hydrate, initialChildren, hydrationCallbacks, concurrentUpdatesByDefaultOverride, identifierPrefix, onRecoverableError, transitionCallbacks)', containerInfo, tag, hydrate, initialChildren, hydrationCallbacks, concurrentUpdatesByDefaultOverride, identifierPrefix, onRecoverableError, transitionCallbacks)
+  console.log("zono4");
+  console.log('4.createFiberRoot参数(containerInfo, tag, hydrate, initialChildren, hydrationCallbacks, concurrentUpdatesByDefaultOverride, identifierPrefix, onRecoverableError, transitionCallbacks)', containerInfo, tag, hydrate, initialChildren, hydrationCallbacks, concurrentUpdatesByDefaultOverride, identifierPrefix, onRecoverableError, transitionCallbacks)
+  /** @desc fiber根节点 */
   const root: FiberRoot = (new FiberRootNode(
     containerInfo,
     tag,
@@ -149,6 +152,8 @@ export function createFiberRoot(
     identifierPrefix,
     onRecoverableError,
   ): any);
+
+
   if (enableSuspenseCallback) {
     root.hydrationCallbacks = hydrationCallbacks;
   }
@@ -159,13 +164,16 @@ export function createFiberRoot(
 
   // Cyclic construction. This cheats the type system right now because
   // stateNode is any.
-  console.log('createFiberRoot内还会创建一个HostRootFiber，FiberRoot.current会指向这个HostRootFiber')
-  console.log('FiberRoot.current是当前页面的虚拟DOM，在页面更新时候FiberRoot会切换current为完成Diff算法的fiber以达到页面更新')
+  console.log("zono5");
+  console.log('5. createFiberRoot内还会创建一个HostRootFiber，FiberRoot.current会指向这个HostRootFiber')
+  /** @desc 未初始化fiber */
   const uninitializedFiber = createHostRootFiber(
     tag,
     isStrictMode,
     concurrentUpdatesByDefaultOverride,
   );
+  console.log("zono6");
+  console.log('6. FiberRoot.current是当前页面的虚拟DOM，在页面更新时候FiberRoot会切换current为完成Diff算法的fiber以达到页面更新')
   root.current = uninitializedFiber;
   uninitializedFiber.stateNode = root;
   console.log('HostRootFiber.stateNode指向FiberRoot，在diff算法节点复用时候会用到')

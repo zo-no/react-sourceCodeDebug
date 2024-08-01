@@ -310,6 +310,8 @@ export function listenToNonDelegatedEvent(
       );
     }
   }
+
+  /** @desc 是否是捕获事件 */
   const isCapturePhaseListener = false;
   const listenerSet = getEventListenerSet(targetElement);
   const listenerSetKey = getListenerSetKey(
@@ -387,7 +389,9 @@ const listeningMarker =
     .toString(36)
     .slice(2);
 
-export function listenToAllSupportedEvents(rootContainerElement: EventTarget) {//事件注册
+
+/** @desc 事件注册 */
+export function listenToAllSupportedEvents(rootContainerElement: EventTarget) {
   console.error(`这里先总结下React的事件，初始化时候React会把所有的浏览器事件绑定到传入的container上面，绑定的事件是一个带有优先级包装过的listenr。如果传入的是注释标签就绑定在它父元素上面，
   并且定义一个map映射表，把原生事件和react事件相对应，当触发一个事件的时候实际是触发初始化时候绑定的listenr，执行这个listenr时会从触发的target向上到root递归收集相同react事件，
   放在一个listenrs数组中，React事件函数是通过优先级封装了一层，每个React事件有着不同的优先级，不同事件对应不同优先级，也对应着不同的事件对象syntheticBaseEvent，把收集到的事件通过batchUpdate触发事件`)
@@ -419,7 +423,9 @@ export function listenToAllSupportedEvents(rootContainerElement: EventTarget) {/
     }
   }
 }
+
 let log = 0
+/** @desc 捕获事件 */
 function addTrappedEventListener(
   targetContainer: EventTarget,
   domEventName: DOMEventName,
@@ -431,7 +437,7 @@ function addTrappedEventListener(
     console.log('listenToNativeEvent调用addTrappedEventListener(绑定对象，事件名，事件flag，是否为捕捉)')
     console.warn('在addTrappedEventListener内先通过createEventListenerWrapperWithPriority创建一个带有优先级的listener')
   }
-  //事件包装优先级
+  /** @desc 事件包装优先级 */
   let listener = createEventListenerWrapperWithPriority(
     targetContainer,
     domEventName,

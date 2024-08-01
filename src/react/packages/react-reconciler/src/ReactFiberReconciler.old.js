@@ -242,6 +242,7 @@ function findHostInstanceWithWarning(
   }
   return findHostInstance(component);
 }
+
 //调用createFiberRoot创建root
 export function createContainer(
   containerInfo: Container,
@@ -255,7 +256,8 @@ export function createContainer(
 ): OpaqueRoot {
   const hydrate = false;
   const initialChildren = null;
-  console.warn('creatRoot通过createContainer内调用createFiberRoot创建应用里面唯一的一个FiberRoot')
+  console.log("zono3");
+  console.warn('3. creatRoot通过createContainer内调用createFiberRoot创建应用里面唯一的一个FiberRoot')
   return createFiberRoot(
     containerInfo,
     tag,

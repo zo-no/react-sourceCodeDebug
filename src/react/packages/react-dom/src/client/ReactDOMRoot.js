@@ -169,7 +169,7 @@ export function createRoot(
   container: Element | DocumentFragment,
   options?: CreateRootOptions,
 ): RootType {
-  console.log('createRoot会先校验传入的container是否为一个有效的DOM节点，如果是开发环境还会做一些其他校验如是否为body等')
+  console.log('zono2. createRoot会先校验传入的container是否为一个有效的DOM节点，如果是开发环境还会做一些其他校验如是否为body等')
   // 校验container是否有效
   if (!isValidContainer(container)) {
     throw new Error('createRoot(...): Target container is not a DOM element.');
@@ -225,6 +225,7 @@ export function createRoot(
     }
   }
 
+  /** @desc 根节点创建 */
   const root = createContainer(
     container,
     ConcurrentRoot,
@@ -235,9 +236,14 @@ export function createRoot(
     onRecoverableError,
     transitionCallbacks,
   );
-  markContainerAsRoot(root.current, container); // 把container这个DOM打上React的标记，就是在DOM上加个属性
-  console.warn('创建完FiberRoot和HostRootFiber后，会根据传入的container是否为注释标签')
-  console.log('如果是则取它的父节点，如果不是就取本身，通过listenToAllSupportedEvents把组成事件(事件委托)')
+  console.log('完成对创建完FiberRoot和HostRootFiber后，会把FiberRoot.current也就是hostFiber传给根节点');
+  /** @desc host Fiber */
+  const uninitializedFiber=root.current
+  console.log("挂载前的根节点",container);
+  markContainerAsRoot(uninitializedFiber, container); // 把container这个DOM打上React的标记，就是在DOM上加个属性
+  console.log("挂载后的根节点",container);
+
+  console.log('判断传入的container是否为注释标签，如果是则取它的父节点，如果不是就取本身，通过listenToAllSupportedEvents把组成事件(事件委托)')
   const rootContainerElement: Document | Element | DocumentFragment =
     container.nodeType === COMMENT_NODE
       ? (container.parentNode: any)

@@ -429,10 +429,11 @@ export function resetWorkInProgress(workInProgress: Fiber, renderLanes: Lanes) {
   return workInProgress;
 }
 
+/** @desc 模式控制 */
 export function createHostRootFiber(
   tag: RootTag,
   isStrictMode: boolean,
-  concurrentUpdatesByDefaultOverride: null | boolean,
+  concurrentUpdatesByDefaultOverride: null | boolean,//控制是否默认启用并发更新。
 ): Fiber {
   let mode;
   if (tag === ConcurrentRoot) {
