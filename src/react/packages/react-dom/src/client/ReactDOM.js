@@ -149,14 +149,6 @@ function createRoot(
   options?: CreateRootOptions,
 ): RootType {
   console.warn('1. 项目初始渲染时，首先调用createRoot(container,option)，通过传入一个HTML节点创建一个根节点。')
-  if (__DEV__) {
-    if (!Internals.usingClientEntryPoint && !__UMD__) {
-      console.error(
-        'You are importing createRoot from "react-dom" which is not supported. ' +
-          'You should instead import it from "react-dom/client".',
-      );
-    }
-  }
   return createRootImpl(container, options);
 }
 
@@ -165,14 +157,6 @@ function hydrateRoot(
   initialChildren: ReactNodeList,
   options?: HydrateRootOptions,
 ): RootType {
-  if (__DEV__) {
-    if (!Internals.usingClientEntryPoint && !__UMD__) {
-      console.error(
-        'You are importing hydrateRoot from "react-dom" which is not supported. ' +
-          'You should instead import it from "react-dom/client".',
-      );
-    }
-  }
   return hydrateRootImpl(container, initialChildren, options);
 }
 
