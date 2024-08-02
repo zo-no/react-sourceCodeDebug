@@ -162,6 +162,7 @@ if (__DEV__) {
   };
 }
 
+/** @desc 初始化更新列表 */
 export function initializeUpdateQueue<State>(fiber: Fiber): void {
   const queue: UpdateQueue<State> = {
     baseState: fiber.memoizedState,
@@ -175,8 +176,8 @@ export function initializeUpdateQueue<State>(fiber: Fiber): void {
     effects: null,
   };
   fiber.updateQueue = queue;
-  console.log('createFiberRoot创建完HostRootFiber和FiberRoot后，会通过initializeUpdateQueue初始化HostRootFiber的updateQueue也就是更新队列')
-  console.log('queue结构如下：', queue)
+  console.log('【初次渲染】zono7.createFiberRoot创建完HostRootFiber和FiberRoot后，会通过initializeUpdateQueue初始化HostRootFiber的updateQueue（更新队列）')
+  console.log('【解释】queue结构如下：', queue)
 }
 
 export function cloneUpdateQueue<State>(

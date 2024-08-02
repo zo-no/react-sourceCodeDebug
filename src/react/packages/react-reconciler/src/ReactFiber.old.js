@@ -119,6 +119,7 @@ if (__DEV__) {
   }
 }
 
+/** @desc 创建的FiberNode节点，对比FiberRootNode节点 */
 function FiberNode(
   tag: WorkTag,
   pendingProps: mixed,
@@ -429,7 +430,7 @@ export function resetWorkInProgress(workInProgress: Fiber, renderLanes: Lanes) {
   return workInProgress;
 }
 
-/** @desc 模式控制 */
+/** @desc 创建HostRootFiber */
 export function createHostRootFiber(
   tag: RootTag,
   isStrictMode: boolean,
@@ -440,13 +441,11 @@ export function createHostRootFiber(
     mode = ConcurrentMode;
     if (isStrictMode === true) {
       mode |= StrictLegacyMode;
+      if (enableStrictEffects)  mode |= StrictEffectsMode;
 
-      if (enableStrictEffects) {
-        mode |= StrictEffectsMode;
-      }
-    } else if (enableStrictEffects && createRootStrictEffectsByDefault) {
-      mode |= StrictLegacyMode | StrictEffectsMode;
-    }
+    } else if (enableStrictEffects && createRootStrictEffectsByDefault)
+     { mode |= StrictLegacyMode | StrictEffectsMode;
+     }
     if (
       // We only use this flag for our repo tests to check both behaviors.
       // TODO: Flip this flag and rename it something like "forceConcurrentByDefaultForTesting"

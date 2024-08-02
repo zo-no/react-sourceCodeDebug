@@ -76,24 +76,6 @@ setAttemptHydrationAtCurrentPriority(attemptHydrationAtCurrentPriority);
 setGetCurrentUpdatePriority(getCurrentUpdatePriority);
 setAttemptHydrationAtPriority(runWithPriority);
 
-if (__DEV__) {
-  if (
-    typeof Map !== 'function' ||
-    // $FlowIssue Flow incorrectly thinks Map has no prototype
-    Map.prototype == null ||
-    typeof Map.prototype.forEach !== 'function' ||
-    typeof Set !== 'function' ||
-    // $FlowIssue Flow incorrectly thinks Set has no prototype
-    Set.prototype == null ||
-    typeof Set.prototype.clear !== 'function' ||
-    typeof Set.prototype.forEach !== 'function'
-  ) {
-    console.error(
-      'React depends on Map and Set built-in types. Make sure that you load a ' +
-        'polyfill in older browsers. https://reactjs.org/link/react-polyfills',
-    );
-  }
-}
 
 setRestoreImplementation(restoreControlledState);
 setBatchingImplementation(
@@ -107,10 +89,6 @@ function createPortal(
   container: Container,
   key: ?string = null,
 ): React$Portal {
-  if (!isValidContainer(container)) {
-    throw new Error('Target container is not a DOM element.');
-  }
-
   // TODO: pass ReactDOM portal implementation as third argument
   // $FlowFixMe The Flow type is opaque but there's no way to actually create it.
   return createPortalImpl(children, container, null, key);
@@ -144,14 +122,16 @@ const Internals = {
   ],
 };
 
+/** @desc 项目启动第一个执行的函数，除了createElement */
 function createRoot(
   container: Element | DocumentFragment,
   options?: CreateRootOptions,
 ): RootType {
-  console.warn('1. 项目初始渲染时，首先调用createRoot(container,option)，通过传入一个HTML节点创建一个根节点。')
+  console.log('【初次渲染】zono2. 项目初始渲染时，先调用createRoot(container,option)，传入一个HTML节点，创建一个根节点。')
   return createRootImpl(container, options);
 }
 
+/** @desc 项目启动第一个执行的函数，除了createElement */
 function hydrateRoot(
   container: Document | Element,
   initialChildren: ReactNodeList,
@@ -203,6 +183,7 @@ export {
   runWithPriority as unstable_runWithPriority,
 };
 
+/** @desc 将 React 的调试工具（DevTools）注入到当前的 React 渲染器中 */
 const foundDevTools = injectIntoDevTools({
   findFiberByHostInstance: getClosestInstanceFromNode,
   bundleType: __DEV__ ? 1 : 0,
@@ -210,31 +191,5 @@ const foundDevTools = injectIntoDevTools({
   rendererPackageName: 'react-dom',
 });
 
-if (__DEV__) {
-  if (!foundDevTools && canUseDOM && window.top === window.self) {
-    // If we're in Chrome or Firefox, provide a download link if not installed.
-    if (
-      (navigator.userAgent.indexOf('Chrome') > -1 &&
-        navigator.userAgent.indexOf('Edge') === -1) ||
-      navigator.userAgent.indexOf('Firefox') > -1
-    ) {
-      const protocol = window.location.protocol;
-      // Don't warn in exotic cases like chrome-extension://.
-      if (/^(https?|file):$/.test(protocol)) {
-        // eslint-disable-next-line react-internal/no-production-logging
-        console.info(
-          '%cDownload the React DevTools ' +
-            'for a better development experience: ' +
-            'https://reactjs.org/link/react-devtools' +
-            (protocol === 'file:'
-              ? '\nYou might need to use a local HTTP server (instead of file://): ' +
-                'https://reactjs.org/link/react-devtools-faq'
-              : ''),
-          'font-weight:bold',
-        );
-      }
-    }
-  }
-}
 
 export const unstable_isNewReconciler = enableNewReconciler;

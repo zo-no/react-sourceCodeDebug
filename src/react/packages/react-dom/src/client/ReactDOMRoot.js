@@ -89,49 +89,13 @@ function ReactDOMRoot(internalRoot: FiberRoot) {
   this._internalRoot = internalRoot;
 }
 
+/** @desc render函数的实现 */
 ReactDOMHydrationRoot.prototype.render = ReactDOMRoot.prototype.render = function(
   children: ReactNodeList,
 ): void {
   const root = this._internalRoot;
-  if (root === null) {
-    throw new Error('Cannot update an unmounted root.');
-  }
 
-  if (__DEV__) {
-    if (typeof arguments[1] === 'function') {
-      console.error(
-        'render(...): does not support the second callback argument. ' +
-          'To execute a side effect after rendering, declare it in a component body with useEffect().',
-      );
-    } else if (isValidContainer(arguments[1])) {
-      console.error(
-        'You passed a container to the second argument of root.render(...). ' +
-          "You don't need to pass it again since you already passed it to create the root.",
-      );
-    } else if (typeof arguments[1] !== 'undefined') {
-      console.error(
-        'You passed a second argument to root.render(...) but it only accepts ' +
-          'one argument.',
-      );
-    }
-
-    const container = root.containerInfo;
-
-    if (container.nodeType !== COMMENT_NODE) {
-      const hostInstance = findHostInstanceWithNoPortals(root.current);
-      if (hostInstance) {
-        if (hostInstance.parentNode !== container) {
-          console.error(
-            'render(...): It looks like the React-rendered content of the ' +
-              'root container was removed without using React. This is not ' +
-              'supported and will cause errors. Instead, call ' +
-              "root.unmount() to empty a root's container.",
-          );
-        }
-      }
-    }
-  }
-  console.warn('createRoot工作做完后，调用root.render实则是调用updateContainer(children, root, null, null)，children是编译好的<App />根组件，root是我们创建好的FiberRoot')
+  console.warn('【初次渲染】zono14.createRoot工作做完后，调用root.render实则是调用updateContainer(children, root, null, null)，children是编译好的<App />根组件，root是我们创建好的FiberRoot')
   console.log('children, root对应结构：',children, root)
   updateContainer(children, root, null, null);
 };
@@ -165,22 +129,23 @@ ReactDOMHydrationRoot.prototype.unmount = ReactDOMRoot.prototype.unmount = funct
   }
 };
 
+/** @desc creatRoot的具体实现 */
 export function createRoot(
   container: Element | DocumentFragment,
   options?: CreateRootOptions,
 ): RootType {
-  console.log('zono2. createRoot会先校验传入的container是否为一个有效的DOM节点，如果是开发环境还会做一些其他校验如是否为body等')
-  // 校验container是否有效
-  if (!isValidContainer(container)) {
-    throw new Error('createRoot(...): Target container is not a DOM element.');
-  }
-
+  console.log('【校验】zono2.1 createRoot会先校验传入的container是否为一个有效的DOM节点，如果是开发环境还会做一些其他校验如是否为body等')
   warnIfReactDOMContainerInDEV(container);
 
+  /** @desc 是否为严格模式 */
   let isStrictMode = false;
-  let concurrentUpdatesByDefaultOverride = false; // 是否默认开启并发模式
+  /** @desc 是否默认开启并发模式 */
+  let concurrentUpdatesByDefaultOverride = false;
+  /** @desc 标识符前缀，默认为空字符串（MPA项目中适合使用） */
   let identifierPrefix = '';
+  /** @desc 可恢复错误的默认处理函数，默认为defaultOnRecoverableError */
   let onRecoverableError = defaultOnRecoverableError;
+  /** @desc 过渡回调函数，默认为null */
   let transitionCallbacks = null;
   // 第二个参数不为空时
   if (options !== null && options !== undefined) {
@@ -225,7 +190,6 @@ export function createRoot(
     }
   }
 
-  /** @desc 根节点创建 */
   const root = createContainer(
     container,
     ConcurrentRoot,
@@ -236,26 +200,30 @@ export function createRoot(
     onRecoverableError,
     transitionCallbacks,
   );
-  console.log('完成对创建完FiberRoot和HostRootFiber后，会把FiberRoot.current也就是hostFiber传给根节点');
-  /** @desc host Fiber */
-  const uninitializedFiber=root.current
-  console.log("挂载前的根节点",container);
-  markContainerAsRoot(uninitializedFiber, container); // 把container这个DOM打上React的标记，就是在DOM上加个属性
-  console.log("挂载后的根节点",container);
 
-  console.log('判断传入的container是否为注释标签，如果是则取它的父节点，如果不是就取本身，通过listenToAllSupportedEvents把组成事件(事件委托)')
+  console.log('【初次渲染】zono9.创建FiberRoot、HostRootFiber后，会把FiberRoot.current（hostFiber）传给根节点');
+  /** @desc HostRootFiber */
+  const uninitializedFiber=root.current
+  markContainerAsRoot(uninitializedFiber, container); // 在container这个DOM打上React的标记，就是在DOM上加个属性
+
+  console.log('【流程】传入的container是注释标签，则取它的父节点，否则取本身，通过listenToAllSupportedEvents把组成事件(事件委托)')
   const rootContainerElement: Document | Element | DocumentFragment =
     container.nodeType === COMMENT_NODE
       ? (container.parentNode: any)
       : container; //判断传入的container是不是注释标签，是就去它父元素
-  //事件绑定
+
+  console.log(`【解释】总结React事件，初始化时，React把所有浏览器事件绑定到传入的container上，绑定的事件是一个带有优先级包装过的listenr。
+    若传入的是注释标签就绑定在它父元素上，并定义一个map映射表，把原生和react事件相对应，当触发一个事件时，实际是触发初始化时绑定的listenr，
+    执行这个listenr时会从触发的target向上到root递归收集相同react事件，放在一个listenrs数组中，React事件函数是通过优先级封装了一层，
+    React事件有不同的优先级，不同事件对应不同优先级，也对应着不同的事件对象syntheticBaseEvent，把收集到的事件通过batchUpdate触发`)
   listenToAllSupportedEvents(rootContainerElement);
-  console.error(`至此createRoot工作基本做完，主要就是根据传入的DOM创建FiberRoot和HostRootFiber，初始化HostRootFiber的状态以及更新队列
+  console.log(`【初次渲染】zono13.至此createRoot工作基本做完，主要就是根据传入的DOM创建FiberRoot和HostRootFiber，初始化HostRootFiber的状态以及更新队列
   并把HostRootFiber.stateNode指向FiberRoot，把FiberRoot.current指向HostRootFiber，用于更新。
   并通过所有浏览器事件名创建对应的带有更新优先级的listener绑定在传入的DOM节点上`)
   return new ReactDOMRoot(root);
 }
 
+// -----------------------------------------------------------------
 function ReactDOMHydrationRoot(internalRoot: FiberRoot) {
   this._internalRoot = internalRoot;
 }
@@ -266,14 +234,13 @@ function scheduleHydration(target: Node) {
 }
 ReactDOMHydrationRoot.prototype.unstable_scheduleHydration = scheduleHydration;
 
+/** @desc hydrateRoot的具体实现 */
 export function hydrateRoot(
   container: Document | Element,
   initialChildren: ReactNodeList,
   options?: HydrateRootOptions,
 ): RootType {
-  if (!isValidContainer(container)) {
-    throw new Error('hydrateRoot(...): Target container is not a DOM element.');
-  }
+
 
   warnIfReactDOMContainerInDEV(container);
 
@@ -341,6 +308,9 @@ export function hydrateRoot(
   return new ReactDOMHydrationRoot(root);
 }
 
+
+// -----------------------------------------------------------------
+/** @desc 校验container是否有效 */
 export function isValidContainer(node: any): boolean {
   return !!(
     node &&
@@ -366,6 +336,7 @@ export function isValidContainerLegacy(node: any): boolean {
   );
 }
 
+/** @desc 检查container是否在DEV环境下 */
 function warnIfReactDOMContainerInDEV(container: any) {
   if (__DEV__) {
     if (

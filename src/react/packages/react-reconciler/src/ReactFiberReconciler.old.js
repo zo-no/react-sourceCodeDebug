@@ -243,7 +243,7 @@ function findHostInstanceWithWarning(
   return findHostInstance(component);
 }
 
-//调用createFiberRoot创建root
+/** @desc 调用createFiberRoot创建root */
 export function createContainer(
   containerInfo: Container,
   tag: RootTag,
@@ -256,8 +256,7 @@ export function createContainer(
 ): OpaqueRoot {
   const hydrate = false;
   const initialChildren = null;
-  console.log("zono3");
-  console.warn('3. creatRoot通过createContainer内调用createFiberRoot创建应用里面唯一的一个FiberRoot')
+  console.log('【初次渲染】zono3. creatRoot通过createContainer内调用createFiberRoot创建应用里面唯一的一个FiberRoot')
   return createFiberRoot(
     containerInfo,
     tag,
@@ -272,6 +271,7 @@ export function createContainer(
   );
 }
 
+/** @desc （SSR）调用createFiberRoot创建root */
 export function createHydrationContainer(
   initialChildren: ReactNodeList,
   // TODO: Remove `callback` when we delete legacy mode.
@@ -299,6 +299,7 @@ export function createHydrationContainer(
     transitionCallbacks,
   );
 
+  console.log("【SSR初次渲染】对比SPA，会多一些处理步骤");
   // TODO: Move this to FiberRoot constructor
   root.context = getContextForSubtree(null);
 

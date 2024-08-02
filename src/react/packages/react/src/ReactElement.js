@@ -355,13 +355,19 @@ export function jsxDEV(type, config, maybeKey, source, self) {
   );
 }
 
+
+/** @desc 是否提示让console.log只执行一次 */
+let log = 0
 /**
  * Create and return a new ReactElement of the given type.
  * See https://reactjs.org/docs/react-api.html#createelement
  */
 export function createElement(type, config, children) {
   let propName;
-  console.log('createElement被调用了');
+  if(log === 0) {
+  console.log('【初次渲染】zono1.createElement被调用了');
+  log=1
+}
   // Reserved names are extracted
   const props = {};
 
@@ -373,10 +379,6 @@ export function createElement(type, config, children) {
   if (config != null) {
     if (hasValidRef(config)) {
       ref = config.ref;
-
-      if (__DEV__) {
-        warnIfStringRefCannotBeAutoConverted(config);
-      }
     }
     if (hasValidKey(config)) {
       if (__DEV__) {
@@ -407,11 +409,6 @@ export function createElement(type, config, children) {
     const childArray = Array(childrenLength);
     for (let i = 0; i < childrenLength; i++) {
       childArray[i] = arguments[i + 2];
-    }
-    if (__DEV__) {
-      if (Object.freeze) {
-        Object.freeze(childArray);
-      }
     }
     props.children = childArray;
   }

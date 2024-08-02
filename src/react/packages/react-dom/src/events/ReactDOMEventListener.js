@@ -79,23 +79,27 @@ export function createEventListenerWrapper(
     targetContainer,
   );
 }
+
+/** @desc 是否提示让console.log只执行一次 */
 let log = 0
+/** @desc 为事件包装优先级 */
 export function createEventListenerWrapperWithPriority(
   targetContainer: EventTarget,
   domEventName: DOMEventName,
   eventSystemFlags: EventSystemFlags,
 ): Function {
   if(log === 0) {
-    console.log('createEventListenerWrapperWithPriority会通过事件名调用getEventPriority获取该事件的优先级')
-    console.warn('主要有三种优先级，从高到低分别是DiscreteEventPriority，ContinuousEventPriority，DefaultEventPriority',DiscreteEventPriority,ContinuousEventPriority,DefaultEventPriority)
-    console.log('像鼠标点击，键盘输入等被列为最高优先级，像鼠标移动，滚动鼠标等被列为第二优先级，这三种优先级对应着不同的listener')
-    console.warn(`当触发这三种listener时候本质都会调用dispatchEvent，不同的是除了默认优先级，
+    console.log('【解释】createEventListenerWrapperWithPriority会通过事件名调用getEventPriority获取该事件的优先级')
+    console.log('【打印】主要三种优先级，从高到低是DiscreteEventPriority，ContinuousEventPriority，DefaultEventPriority',DiscreteEventPriority,ContinuousEventPriority,DefaultEventPriority)
+    console.log('【解释】鼠标点击、键盘输入等被列为最高优先级，像鼠标移动、滚动鼠标等被列为第二优先级，这三种优先级对应着不同的listener')
+    console.log(`【解释】当触发这三种listener时候本质都会调用dispatchEvent，不同的是除了默认优先级，
     其余两种优先级都会先获取当前更新优先级赋值给一个变量previousPriority，再把当前更新优先级设置触发当前事件的优先级，再去触发dispatchEvent，最后再把当前优先级设置有previousPriority`)
     log = 1
   }
   const eventPriority = getEventPriority(domEventName);
   let listenerWrapper;
   // 根据事件名注册不同的dispatch函数
+  // 优先级tag是二进制编写，react自己对事件进行了调度
   switch (eventPriority) {
     case DiscreteEventPriority: //最高优先级sync，第一车道
       listenerWrapper = dispatchDiscreteEvent;
@@ -115,7 +119,8 @@ export function createEventListenerWrapperWithPriority(
     targetContainer,
   );
 }
-// click事件等
+
+/** @desc click事件等 */
 function dispatchDiscreteEvent(
   domEventName,
   eventSystemFlags,
@@ -298,6 +303,7 @@ export function findInstanceBlockingEvent(
   return null;
 }
 
+/** @desc 获取事件优先级 */
 export function getEventPriority(domEventName: DOMEventName): * {
   switch (domEventName) {
     // Used by SimpleEventPlugin:
