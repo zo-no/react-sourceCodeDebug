@@ -108,6 +108,7 @@ export function injectInternals(internals: Object): boolean {
   }
 }
 
+/** @desc 与 React DevTools 进行交互。 */
 export function onScheduleRoot(root: FiberRoot, children: ReactNodeList) {
   if (__DEV__) {
     if (
@@ -506,6 +507,7 @@ export function markRenderStopped(): void {
   }
 }
 
+/** @desc 启用调度分析器时，标记渲染任务的调度。 */
 export function markRenderScheduled(lane: Lane): void {
   if (enableSchedulingProfiler) {
     if (

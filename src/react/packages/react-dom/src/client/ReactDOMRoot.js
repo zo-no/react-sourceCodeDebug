@@ -85,6 +85,7 @@ const defaultOnRecoverableError =
         console['error'](error);
       };
 
+/** @desc 将root挂载在内部root */
 function ReactDOMRoot(internalRoot: FiberRoot) {
   this._internalRoot = internalRoot;
 }
@@ -93,10 +94,11 @@ function ReactDOMRoot(internalRoot: FiberRoot) {
 ReactDOMHydrationRoot.prototype.render = ReactDOMRoot.prototype.render = function(
   children: ReactNodeList,
 ): void {
+  //获取到root
   const root = this._internalRoot;
 
-  console.warn('【初次渲染】zono14.createRoot工作做完后，调用root.render实则是调用updateContainer(children, root, null, null)，children是编译好的<App />根组件，root是我们创建好的FiberRoot')
-  console.log('children, root对应结构：',children, root)
+  console.log('【初次渲染1】zono1.createRoot工作做完后，调用root.render实则是调用updateContainer(children, root, null, null)，children是编译好的<App />根组件，root是我们创建好的FiberRoot')
+  console.log('【打印】children, root对应结构：',children, root)
   updateContainer(children, root, null, null);
 };
 

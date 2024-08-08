@@ -320,25 +320,33 @@ export function createHydrationContainer(
 
   return root;
 }
-//创建update，挂载payload
+
+/**
+ * @desc 创建update，挂载payload（render函数的具体实现）
+ * 将element转化为fiber，放入fiberRoot.current.child
+ */
 export function updateContainer(
   element: ReactNodeList,
   container: OpaqueRoot,
   parentComponent: ?React$Component<any, any>,
   callback: ?Function,
 ): Lane {
-  if (__DEV__) {
-    onScheduleRoot(container, element);
-  }
+  console.log('-----【初次渲染】开始调用updateContainer-----');
+  /** @desc 【初次渲染】hostRootnode */
   const current = container.current;
+  console.log("【初次渲染1】zono2. 获取事件触发的时间、和请求的优先级");
   const eventTime = requestEventTime();
+
+  /** @desc 下一个注释再这里面 */
   const lane = requestUpdateLane(current);
+
   if (enableSchedulingProfiler) {
     markRenderScheduled(lane);
   }
 
   const context = getContextForSubtree(parentComponent);
   if (container.context === null) {
+    /** @desc 初次渲染，没有上下文时 */
     container.context = context;
   } else {
     container.pendingContext = context;
@@ -361,12 +369,14 @@ export function updateContainer(
     }
   }
 
+  console.log("【初次渲染1】zono4.然后会创建update对象");
   const update = createUpdate(eventTime, lane);
   // Caution: React DevTools currently depends on this property
   // being called "element".
   update.payload = {element};
   callback = callback === undefined ? null : callback;
   if (callback !== null) {
+    /** @desc callback一定是个函数 */
     if (__DEV__) {
       if (typeof callback !== 'function') {
         console.error(
@@ -378,17 +388,18 @@ export function updateContainer(
     }
     update.callback = callback;
   }
-  console.error(`updateContainer会通过FiberRoot获取HostRootFiber，再通过HostRootFiber获取优先级，通过优先级和当前时间创建一个update，
-  并把编译好的App根节点赋予update.payload表示要更新的节点，然后调用enqueueUpdate初始化HostRootFiber的updatequeue，
-  updatequeue是一个环状的链表`)
-  console.log('优先级，update对应结构：', lane, update)
+  console.log(`【初次渲染1】zono5.updateContainer会通过FiberRoot获取HostRootFiber，再通过HostRootFiber获取优先级，通过优先级和当前时间创建一个update，
+  并把编译好的App根节点赋予update.payload表示要更新的节点，`)
+  console.log('【打印】优先级，update对应结构：', lane, update)
   enqueueUpdate(current, update, lane);
-  console.warn('updatequeue结构如下：',current.updateQueue)
-  console.log('初始化更新队列后，调用scheduleUpdateOnFiber开始执行更新')
+  console.log('【初次渲染1】zono6.然后调用enqueueUpdate函数，初始化HostRootFiber的updatequeue,updatequeue是一个环状的链表,结构如下：',current.updateQueue)
+  console.log('【初次渲染1】zono7.初始化更新队列后，调用scheduleUpdateOnFiber开始执行更新')
   const root = scheduleUpdateOnFiber(current, lane, eventTime);
   if (root !== null) {
     entangleTransitions(root, current, lane);
   }
+  console.log('-----【初次渲染1】结束调用updateContainer-----');
+
 
   return lane;
 }

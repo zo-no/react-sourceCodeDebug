@@ -103,6 +103,7 @@ const isInputPending =
 
 const continuousOptions = { includeContinuous: enableIsInputPendingContinuous };
 
+/** @desc 检查timerqueue中是否有过期任务有就加入taskqueue */
 function advanceTimers(currentTime) {
   // Check for tasks that are no longer delayed and add them to the queue.
   let timer = peek(timerQueue);
@@ -129,7 +130,7 @@ function advanceTimers(currentTime) {
 
 function handleTimeout(currentTime) {
   isHostTimeoutScheduled = false;
-  // 检查timerqueue中是否有过期任务有就加入taskqueue
+
   advanceTimers(currentTime);
 
   if (!isHostCallbackScheduled) {
@@ -144,7 +145,8 @@ function handleTimeout(currentTime) {
     }
   }
 }
-//
+
+/** @desc  */
 function flushWork(hasTimeRemaining, initialTime) {
   if (enableProfiling) {
     markSchedulerUnsuspended(initialTime);
@@ -186,16 +188,20 @@ function flushWork(hasTimeRemaining, initialTime) {
     }
   }
 }
+
 let work = 0
-function workLoop(hasTimeRemaining, initialTime) { // 
-  work === 0 && console.error(`
-    在scheduler调度中通过workLoop循环taskQueue执行调度任务。
-    workLoop首先会检查timerQueue中有没有要过期的任务加入到taskQueue中。
+/** @desc （该函数会一直执行？），在scheduler调度中通过workLoop循环taskQueue执行调度任务。 */
+function workLoop(hasTimeRemaining, initialTime) { //
+  console.log("--------------------------------【三、 workLoop开始运行】------------------------------");
+
+  work === 0 && console.log(`
+    【介绍】在scheduler调度中通过workLoop循环taskQueue执行调度任务。
+    【解释】workLoop首先会检查timerQueue中有没有要过期的任务加入到taskQueue中。
     取出task中的调度任务，判断当前任务执行的时间是否超过一帧渲染的时间和用户是否与界面有交互来判断是否应该中断当前任务。
     如果不中断就会取出taskQueue中react注册的调度任务进行执行，执行完react的任务以后会根据react任务是否返回一个回调函数来判断当前任务是否被中断。
     如果任务在执行过程中被中断就会把react任务返回的回调函数作为当前调度的新任务。没有在执行中被中断的话就会执行完成以后从task队列中删除任务
     当task队列中的任务执行完以后，会通过settimeout调度执行timer队列中的任务。
-  `)
+  `,hasTimeRemaining, initialTime)
   work = 1
   let currentTime = initialTime;
   //检查是否有过期任务需要添加到taskQueue中执行的
@@ -246,9 +252,11 @@ function workLoop(hasTimeRemaining, initialTime) { //
     }
     currentTask = peek(taskQueue);
   }
+
   // Return whether there's additional work
   if (currentTask !== null) {
     // 表示taskqueue没执行完，在performWorkUntilDeadline会继续发起调度
+    console.log("-------------------------------【三、 workLoop结束运行】------------------------------");
     return true;
   } else {
     // taskqueue执行完了，则会通过settimeout的方式调度执行timerqueue
@@ -256,6 +264,7 @@ function workLoop(hasTimeRemaining, initialTime) { //
     if (firstTimer !== null) {
       requestHostTimeout(handleTimeout, firstTimer.startTime - currentTime);
     }
+    console.log("-------------------------------【三、 workLoop结束运行】------------------------------");
     return false;
   }
 }
@@ -322,7 +331,8 @@ function unstable_wrapCallback(callback) {
   };
 }
 let log = 0
-function unstable_scheduleCallback(priorityLevel, callback, options) { //这个函数是和react连接的桥梁 
+/** @desc 这个函数是和react连接的桥梁  */
+function unstable_scheduleCallback(priorityLevel, callback, options) { //
   var currentTime = getCurrentTime();
   var startTime;
   if (typeof options === 'object' && options !== null) {
@@ -356,7 +366,8 @@ function unstable_scheduleCallback(priorityLevel, callback, options) { //这个�
   }
   var expirationTime = startTime + timeout; // 任务过期时间，根据优先级和当前时间以及开始时间算出
 
-  var newTask = { // 以react的perform事件创建一个新任务task
+  /** @desc 以react的perform事件创建一个新任务task */
+  var newTask = { //
     id: taskIdCounter++,
     callback, // callback = performConcurrentWorkOnRoot
     priorityLevel,
@@ -369,14 +380,23 @@ function unstable_scheduleCallback(priorityLevel, callback, options) { //这个�
   }
 
   console.log(startTime, currentTime, timeout, priorityLevel,'******start current out level*****')                                                           //react请求调度执行performconcurrentworkonRoot
-  log === 0 && console.error(`
-  scheduler主要是用于react进行注册调度任务（更新和mounted等），他会根据你注册的任务是否是延时任务来执行不同的调度方式。
+  log === 0 && console.log(`
+  【解释】scheduler包：主要是用于react进行注册调度任务（更新和mounted等），他会根据你注册的任务是否是延时任务来执行不同的调度方式。
   如果是延时任务主要是通过settimeout来执行调度，需要立马执行的任务会先判断是否是node或ie环境如果是就使用setImmediate，如果不是就会判断支不支持MessageChannel如果支持就使用MessageChannel，如果不支持就使用settimeout兜底调度执行
   `)
-  log === 0 && console.error(`
-  scheduleCallback先通过performance.now获取当前时间，再根据注册调度的第三个参数配没有配置delay延迟时间，如果有那么当前调度任务的开始时间就是当前时间加上延迟时间，如果没有则任务调度时间就是当前时间。
-  再通过开始时间和调度优先级计算出任务的过期时间，调度优先级0-5对应不同的时间段，1代表最高优先级对应-1ms，2代表用户行为优先级对应250ms，3代表普通对应5000ms，用开始时间加上调度优先级对应时间就是过期时间。
-  scheduleCallback中有两个任务队列：timerQueue 和 taskQueue中，timer表示存那些可以延时的调度任务，task表示那些已过期的任务也就是需要马上执行的任务。
+  log === 0 && console.log(`【解释】
+  scheduleCallback函数，
+  先通过performance.now获取当前时间，
+  再根据注册调度的第三个参数配没有配置delay延迟时间，若有那么当前调度任务的开始时间就是当前时间加上延迟时间，若无则任务调度时间就是当前时间。
+  后通过开始时间和调度优先级计算出任务的过期时间，调度优先级0-5对应不同的时间段
+  1代表最高优先级对应-1ms，
+  2代表用户行为优先级对应250ms，
+  3代表普通对应5000ms，
+  用开始时间加上调度优先级对应时间就是过期时间。
+  `)
+  console.log(`
+  【解释】scheduleCallback函数中有两个任务队列：timerQueue 和 taskQueue
+  其中中，timer表示存那些可以延时的调度任务，task表示那些已过期的任务，需要马上执行的任务。
   再用开始时间和当前时间做对比，如果任务开始时间大于当前时间就会把当前调度任务放入timer中表示是一个延时调度，反之就会把任务放入task过期任务队列中。
   如果当前调度的任务是延时任务就会去检测，过期任务队列是否为空并且当前调度任务是最快要过期的任务，如果满足这两个条件就会检测是否还有调度任务在执行，有的话就终止然后通过settimeout开启新的调度执行。
   如果当前任务是过期任务需要立马执行的，就会检测当前是否有调度任务在执行，如果有就会把当前任务到调度中，如果没有就会通过MessageChannel开启新的调度执行`)

@@ -15,6 +15,7 @@ import * as Scheduler from 'scheduler';
 
 import * as SchedulerMock from 'scheduler/src/forks/SchedulerMock';
 
+/** @desc 这里将会链接到src/react/packages/scheduler/src/forks/Scheduler.js */
 export const scheduleCallback = Scheduler.unstable_scheduleCallback;
 export const cancelCallback = Scheduler.unstable_cancelCallback;
 export const shouldYield = Scheduler.unstable_shouldYield;

@@ -19,6 +19,12 @@ export function push(heap: Heap, node: Node): void {
   siftUp(heap, node, index);
 }
 
+/**
+ * 查看堆顶元素但不移除它。
+ *
+ * @param {Heap} heap - 待查看的堆。
+ * @returns {Node | null} - 如果堆为空，则返回null；否则返回堆顶元素。
+ */
 export function peek(heap: Heap): Node | null {
   return heap.length === 0 ? null : heap[0];
 }

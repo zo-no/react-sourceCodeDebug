@@ -449,6 +449,7 @@ export function includesSyncLane(lanes: Lanes) {
   return (lanes & SyncLane) !== NoLanes;
 }
 
+/** @desc 判断 lanes 是否包含非空闲 */
 export function includesNonIdleWork(lanes: Lanes) {
   return (lanes & NonIdleLanes) !== NoLanes;
 }
@@ -507,10 +508,12 @@ export function claimNextRetryLane(): Lane {
   return lane;
 }
 
+/** @desc 获得最高的lanes */
 export function getHighestPriorityLane(lanes: Lanes): Lane {
-  return lanes & -lanes;
+  return lanes & -lanes;//按位与操作
 }
 
+/** @desc  从给定的 lanes 中选择一个任意的 lane（通道）,选择的是优先级最高的 lane*/
 export function pickArbitraryLane(lanes: Lanes): Lane {
   // This wrapper function gets inlined. Only exists so to communicate that it
   // doesn't matter which bit is selected; you can pick any bit without
@@ -535,6 +538,7 @@ export function isSubsetOfLanes(set: Lanes, subset: Lanes | Lane) {
   return (set & subset) === subset;
 }
 
+/** @desc 合并Lanes，按位或 */
 export function mergeLanes(a: Lanes | Lane, b: Lanes | Lane): Lanes {
   return a | b;
 }

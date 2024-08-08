@@ -32,6 +32,7 @@ export function getCurrentUpdatePriority(): EventPriority {
   return currentUpdatePriority;
 }
 
+/** @desc 设置更新权重 */
 export function setCurrentUpdatePriority(newPriority: EventPriority) {
   currentUpdatePriority = newPriority;
 }
@@ -67,6 +68,7 @@ export function isHigherEventPriority(
   return a !== 0 && a < b;
 }
 
+/** @desc 根据给定的lanes（通道）来确定事件的优先级。 */
 export function lanesToEventPriority(lanes: Lanes): EventPriority {
   const lane = getHighestPriorityLane(lanes);
   if (!isHigherEventPriority(DiscreteEventPriority, lane)) {
