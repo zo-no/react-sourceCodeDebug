@@ -882,6 +882,7 @@ function performConcurrentWorkOnRoot(root, didTimeout) { //scheduleCallback传�
   if (enableProfilerTimer && enableProfilerNestedUpdatePhase) {
     resetNestedUpdateFlag();
   }
+  console.log('【test】递归执行performConcurrentWorkOnRoot函数');
 
   // Since we know we're in a React event, we can clear the current
   // event time. The next update will compute a new event time.
@@ -2418,7 +2419,7 @@ export function enqueuePendingPassiveProfilerEffect(fiber: Fiber): void {
   }
 }
 
-function flushPassiveEffectsImpl() {// 
+function flushPassiveEffectsImpl() {//
   if (rootWithPendingPassiveEffects === null) {
     return false;
   }

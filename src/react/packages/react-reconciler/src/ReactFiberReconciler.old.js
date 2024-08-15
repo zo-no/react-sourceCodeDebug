@@ -331,18 +331,18 @@ export function updateContainer(
   parentComponent: ?React$Component<any, any>,
   callback: ?Function,
 ): Lane {
-  console.log('-----【初次渲染】开始调用updateContainer-----');
+  console.log('---【updateContainer】开始调用updateContainer---');
   /** @desc 【初次渲染】hostRootnode */
   const current = container.current;
-  console.log("【初次渲染1】zono2. 获取事件触发的时间、和请求的优先级");
+  console.log("【updateContainer】1.获取事件触发的时间、和请求的优先级");
   const eventTime = requestEventTime();
 
   /** @desc 下一个注释再这里面 */
   const lane = requestUpdateLane(current);
 
-  if (enableSchedulingProfiler) {
+  if (enableSchedulingProfiler)
     markRenderScheduled(lane);
-  }
+
 
   const context = getContextForSubtree(parentComponent);
   if (container.context === null) {
@@ -352,54 +352,26 @@ export function updateContainer(
     container.pendingContext = context;
   }
 
-  if (__DEV__) {
-    if (
-      ReactCurrentFiberIsRendering &&
-      ReactCurrentFiberCurrent !== null &&
-      !didWarnAboutNestedUpdates
-    ) {
-      didWarnAboutNestedUpdates = true;
-      console.error(
-        'Render methods should be a pure function of props and state; ' +
-          'triggering nested component updates from render is not allowed. ' +
-          'If necessary, trigger nested updates in componentDidUpdate.\n\n' +
-          'Check the render method of %s.',
-        getComponentNameFromFiber(ReactCurrentFiberCurrent) || 'Unknown',
-      );
-    }
-  }
-
-  console.log("【初次渲染1】zono4.然后会创建update对象");
+  console.log("【updateContainer】2.然后会创建update对象");
   const update = createUpdate(eventTime, lane);
   // Caution: React DevTools currently depends on this property
   // being called "element".
   update.payload = {element};
   callback = callback === undefined ? null : callback;
-  if (callback !== null) {
-    /** @desc callback一定是个函数 */
-    if (__DEV__) {
-      if (typeof callback !== 'function') {
-        console.error(
-          'render(...): Expected the last optional `callback` argument to be a ' +
-            'function. Instead received: %s.',
-          callback,
-        );
-      }
-    }
+  if (callback !== null)
     update.callback = callback;
-  }
-  console.log(`【初次渲染1】zono5.updateContainer会通过FiberRoot获取HostRootFiber，再通过HostRootFiber获取优先级，通过优先级和当前时间创建一个update，
+
+  console.log(`【updateContainer】zono5.updateContainer会通过FiberRoot获取HostRootFiber，再通过HostRootFiber获取优先级，通过优先级和当前时间创建一个update，
   并把编译好的App根节点赋予update.payload表示要更新的节点，`)
   console.log('【打印】优先级，update对应结构：', lane, update)
   enqueueUpdate(current, update, lane);
-  console.log('【初次渲染1】zono6.然后调用enqueueUpdate函数，初始化HostRootFiber的updatequeue,updatequeue是一个环状的链表,结构如下：',current.updateQueue)
-  console.log('【初次渲染1】zono7.初始化更新队列后，调用scheduleUpdateOnFiber开始执行更新')
+  console.log('【updateContainer】zono6.然后调用enqueueUpdate函数，初始化HostRootFiber的updatequeue,updatequeue是一个环状的链表,结构如下：',current.updateQueue)
+  console.log('【updateContainer】zono7.初始化更新队列后，调用scheduleUpdateOnFiber开始执行更新')
   const root = scheduleUpdateOnFiber(current, lane, eventTime);
   if (root !== null) {
     entangleTransitions(root, current, lane);
   }
-  console.log('-----【初次渲染1】结束调用updateContainer-----');
-
+  console.log('-----【updateContainer】结束调用updateContainer-----');
 
   return lane;
 }

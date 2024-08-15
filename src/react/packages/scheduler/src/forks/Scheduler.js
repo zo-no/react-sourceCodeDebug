@@ -41,6 +41,7 @@ import {
   startLoggingProfilingEvents,
 } from '../SchedulerProfiling';
 
+/** @desc 获取当前时间 */
 let getCurrentTime;
 const hasPerformanceNow =
   typeof performance === 'object' && typeof performance.now === 'function';
@@ -175,6 +176,7 @@ function flushWork(hasTimeRemaining, initialTime) {
         throw error;
       }
     } else {
+      console.log("执行flushWork函数");
       // No catch in prod code path.
       return workLoop(hasTimeRemaining, initialTime);
     }
@@ -331,7 +333,12 @@ function unstable_wrapCallback(callback) {
   };
 }
 let log = 0
-/** @desc 这个函数是和react连接的桥梁  */
+/**
+ * @desc 这个函数是和react连接的桥梁，用于调度回调函数
+ * @param {number} priorityLevel - 任务的优先级
+ * @param {function} callback - 要调度的回调函数
+ * @param {object} [options] - 可选参数，包含任务的延迟时间等
+ */
 function unstable_scheduleCallback(priorityLevel, callback, options) { //
   var currentTime = getCurrentTime();
   var startTime;
@@ -381,11 +388,10 @@ function unstable_scheduleCallback(priorityLevel, callback, options) { //
 
   console.log(startTime, currentTime, timeout, priorityLevel,'******start current out level*****')                                                           //react请求调度执行performconcurrentworkonRoot
   log === 0 && console.log(`
-  【解释】scheduler包：主要是用于react进行注册调度任务（更新和mounted等），他会根据你注册的任务是否是延时任务来执行不同的调度方式。
+  【scheduleCallback解释】scheduler包：主要是用于react进行注册调度任务（更新和mounted等），他会根据你注册的任务是否是延时任务来执行不同的调度方式。
   如果是延时任务主要是通过settimeout来执行调度，需要立马执行的任务会先判断是否是node或ie环境如果是就使用setImmediate，如果不是就会判断支不支持MessageChannel如果支持就使用MessageChannel，如果不支持就使用settimeout兜底调度执行
   `)
-  log === 0 && console.log(`【解释】
-  scheduleCallback函数，
+  log === 0 && console.log(`【scheduleCallback解释】scheduleCallback函数，
   先通过performance.now获取当前时间，
   再根据注册调度的第三个参数配没有配置delay延迟时间，若有那么当前调度任务的开始时间就是当前时间加上延迟时间，若无则任务调度时间就是当前时间。
   后通过开始时间和调度优先级计算出任务的过期时间，调度优先级0-5对应不同的时间段
@@ -395,7 +401,7 @@ function unstable_scheduleCallback(priorityLevel, callback, options) { //
   用开始时间加上调度优先级对应时间就是过期时间。
   `)
   console.log(`
-  【解释】scheduleCallback函数中有两个任务队列：timerQueue 和 taskQueue
+  【scheduleCallback解释】scheduleCallback函数中有两个任务队列：timerQueue 和 taskQueue
   其中中，timer表示存那些可以延时的调度任务，task表示那些已过期的任务，需要马上执行的任务。
   再用开始时间和当前时间做对比，如果任务开始时间大于当前时间就会把当前调度任务放入timer中表示是一个延时调度，反之就会把任务放入task过期任务队列中。
   如果当前调度的任务是延时任务就会去检测，过期任务队列是否为空并且当前调度任务是最快要过期的任务，如果满足这两个条件就会检测是否还有调度任务在执行，有的话就终止然后通过settimeout开启新的调度执行。
@@ -563,12 +569,14 @@ function forceFrameRate(fps) {
   }
 }
 
-const performWorkUntilDeadline = () => { // 调度时候执行的函数
+const performWorkUntilDeadline = () => {
+  console.log('【开始调度】调度时候执行的performWorkUntilDeadline函数');
   if (scheduledHostCallback !== null) { // scheduledHostCallback为flushWork
     const currentTime = getCurrentTime();
     // Keep track of the start time so we can measure how long the main thread
     // has been blocked.
     startTime = currentTime;
+    /** @desc 是否有剩余时间 */
     const hasTimeRemaining = true;
 
     // If a scheduler task throws, exit the current browser task so the
@@ -579,6 +587,8 @@ const performWorkUntilDeadline = () => { // 调度时候执行的函数
     // `hasMoreWork` will remain true, and we'll continue the work loop.
     let hasMoreWork = true;
     try {
+      console.log("【workLoop中间】执行挂载在scheduledHostCallback上的实际是flushWork函数");
+
       // scheduledHostCallback为我们requestHostCallback传入的函数 flushwork，实则执行 workLoop
       hasMoreWork = scheduledHostCallback(hasTimeRemaining, currentTime);
     } finally {
@@ -602,6 +612,10 @@ const performWorkUntilDeadline = () => { // 调度时候执行的函数
   needsPaint = false;
 };
 
+
+console.log('~~~~~~~~~~~~~~~~~~初始化调度器~~~~~~~~~~~~~~~~~~~~~~~');
+
+/** @desc 调度PerformWorkUntilDeadline的函数，可以理解为setImmediate的适配多端的高级版 */
 let schedulePerformWorkUntilDeadline;
 // schedulePerformWorkUntilDeadline这个函数针对不同的环境实现也不同，node端主要是setImmediate，普通的web使用MessageChannel，最次就是setTimeout
 if (typeof localSetImmediate === 'function') {
@@ -627,17 +641,23 @@ if (typeof localSetImmediate === 'function') {
   const port = channel.port2;
   channel.port1.onmessage = performWorkUntilDeadline;
   schedulePerformWorkUntilDeadline = () => {
+
+
     port.postMessage(null);
   };
 } else {
   // 如果messageChanel都不支持就使用settimeout
   // We should only fallback here in non-browser environments.
   schedulePerformWorkUntilDeadline = () => {
+
     localSetTimeout(performWorkUntilDeadline, 0);
   };
 }
 
-function requestHostCallback(callback) {// 过期任务请求调度
+function requestHostCallback(callback) {
+  console.log("【requestHostCallback】requestHostCallback开始执行，这里会调用schedulePerformWorkUntilDeadline");
+
+  // 过期任务请求调度
   scheduledHostCallback = callback;
   //判断是否有messageChanel在运行
   if (!isMessageLoopRunning) { //初始为false

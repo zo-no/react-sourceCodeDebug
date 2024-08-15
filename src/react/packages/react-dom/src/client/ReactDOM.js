@@ -127,7 +127,7 @@ function createRoot(
   container: Element | DocumentFragment,
   options?: CreateRootOptions,
 ): RootType {
-  console.log('【初次渲染】zono2. 项目初始渲染时，先调用createRoot(container,option)，传入一个HTML节点，创建一个根节点。')
+  console.log('【createRoot】初始渲染时，先调用createRoot(container,option)，传入一个HTML节点，创建一个根节点。')
   return createRootImpl(container, options);
 }
 

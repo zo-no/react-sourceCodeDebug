@@ -81,3 +81,4 @@ export {
   useTransition,
   version,
 } from './src/React';
+console.log('~~~~~~~~~~~~~~~~~~初始化react~~~~~~~~~~~~~~~~~~~~~~~');

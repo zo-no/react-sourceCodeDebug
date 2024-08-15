@@ -365,7 +365,7 @@ let log = 0
 export function createElement(type, config, children) {
   let propName;
   if(log === 0) {
-  console.log('【初次渲染】zono1.createElement被调用了');
+  console.log('[createElement]createElement实现');
   log=1
 }
   // Reserved names are extracted

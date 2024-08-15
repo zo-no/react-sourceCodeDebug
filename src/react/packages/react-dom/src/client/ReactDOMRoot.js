@@ -96,8 +96,8 @@ ReactDOMHydrationRoot.prototype.render = ReactDOMRoot.prototype.render = functio
 ): void {
   //获取到root
   const root = this._internalRoot;
-
-  console.log('【初次渲染1】zono1.createRoot工作做完后，调用root.render实则是调用updateContainer(children, root, null, null)，children是编译好的<App />根组件，root是我们创建好的FiberRoot')
+  console.log("【render】render函数基于原型链的方式初始化于root容器上");
+  console.log('【render】实际实现是调用updateContainer(children, root, null, null)，children是编译好的<App />根组件，root是我们创建好的FiberRoot')
   console.log('【打印】children, root对应结构：',children, root)
   updateContainer(children, root, null, null);
 };
@@ -136,7 +136,7 @@ export function createRoot(
   container: Element | DocumentFragment,
   options?: CreateRootOptions,
 ): RootType {
-  console.log('【校验】zono2.1 createRoot会先校验传入的container是否为一个有效的DOM节点，如果是开发环境还会做一些其他校验如是否为body等')
+ // createRoot会先校验传入的container是否为一个有效的DOM节点，如果是开发环境还会做一些其他校验如是否为body
   warnIfReactDOMContainerInDEV(container);
 
   /** @desc 是否为严格模式 */
@@ -151,27 +151,7 @@ export function createRoot(
   let transitionCallbacks = null;
   // 第二个参数不为空时
   if (options !== null && options !== undefined) {
-    if (__DEV__) {
-      if ((options: any).hydrate) {
-        console.warn(
-          'hydrate through createRoot is deprecated. Use ReactDOMClient.hydrateRoot(container, <App />) instead.',
-        );
-      } else {
-        if (
-          typeof options === 'object' &&
-          options !== null &&
-          (options: any).$$typeof === REACT_ELEMENT_TYPE
-        ) {
-          console.error(
-            'You passed a JSX element to createRoot. You probably meant to ' +
-              'call root.render instead. ' +
-              'Example usage:\n\n' +
-              '  let root = createRoot(domContainer);\n' +
-              '  root.render(<App />);',
-          );
-        }
-      }
-    }
+
     if (options.unstable_strictMode === true) {
       isStrictMode = true;
     }
@@ -208,7 +188,7 @@ export function createRoot(
   const uninitializedFiber=root.current
   markContainerAsRoot(uninitializedFiber, container); // 在container这个DOM打上React的标记，就是在DOM上加个属性
 
-  console.log('【流程】传入的container是注释标签，则取它的父节点，否则取本身，通过listenToAllSupportedEvents把组成事件(事件委托)')
+  //【流程】传入的container是注释标签，则取它的父节点，否则取本身，通过listenToAllSupportedEvents把组成事件(事件委托)
   const rootContainerElement: Document | Element | DocumentFragment =
     container.nodeType === COMMENT_NODE
       ? (container.parentNode: any)
