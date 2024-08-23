@@ -283,7 +283,8 @@ if (__DEV__) {
   didWarnAboutTailOptions = {};
   didWarnAboutDefaultPropsOnFunctionComponent = {};
 }
-// diff算法child
+
+/** @desc diff算法child */
 export function reconcileChildren(
   current: Fiber | null,
   workInProgress: Fiber,
@@ -308,7 +309,7 @@ export function reconcileChildren(
 
     // If we had any progressed work already, that is invalid at this point so
     // let's throw it out.
-    console.error('diff 算法入口reconcileChildFibers ********')
+    console.error('【reconcileChildren,error看调用栈】diff 算法入口reconcileChildFibers ********')
     workInProgress.child = reconcileChildFibers(
       workInProgress,
       current.child,
@@ -1316,6 +1317,7 @@ function pushHostRootContext(workInProgress) {
   pushHostContainer(workInProgress, root.containerInfo);
 }
 
+/** @desc 更新HostRoot */
 function updateHostRoot(current, workInProgress, renderLanes) {
   pushHostRootContext(workInProgress);
 
@@ -1441,6 +1443,7 @@ function updateHostRoot(current, workInProgress, renderLanes) {
     if (nextChildren === prevChildren) {
       return bailoutOnAlreadyFinishedWork(current, workInProgress, renderLanes);
     }
+    // diff算法入口
     reconcileChildren(current, workInProgress, nextChildren, renderLanes);
   }
   return workInProgress.child;
@@ -3774,6 +3777,7 @@ function attemptEarlyBailoutIfNoScheduledUpdate(
   return bailoutOnAlreadyFinishedWork(current, workInProgress, renderLanes);
 }
 //render
+let beginWorkLog=0
 function beginWork(
   current: Fiber | null,
   workInProgress: Fiber,
@@ -3796,9 +3800,10 @@ function beginWork(
       );
     }
   }
-  console.log('当前beginwork的渲染优先级以及current tree 和workInProgress tree',renderLanes, current, workInProgress)
+  beginWorkLog===0&&console.error('【beginWork】当前beginwork的渲染优先级以及current tree 和workInProgress tree',renderLanes, current, workInProgress)
+
   if (current !== null) {
-    console.log('current不为空******************************')
+    beginWorkLog===0&&console.log('【beginWork】current不为空******************************')
     const oldProps = current.memoizedProps;
     const newProps = workInProgress.pendingProps;
 
@@ -3872,7 +3877,7 @@ function beginWork(
 
   switch (workInProgress.tag) {
     case IndeterminateComponent: {
-      console.log('log: beginwork 函数组件组件初次都会走mountIndeterminateComponent再来判别是函数组件还是类组件并赋值tag')
+      console.log('【beginWork】log: beginwork 函数组件组件初次都会走mountIndeterminateComponent再来判别是函数组件还是类组件并赋值tag')
       return mountIndeterminateComponent(
         current,
         workInProgress,
@@ -3920,6 +3925,7 @@ function beginWork(
       );
     }
     case HostRoot:
+      // 第一次渲染
       return updateHostRoot(current, workInProgress, renderLanes);
     case HostComponent:
       return updateHostComponent(current, workInProgress, renderLanes);
@@ -4049,6 +4055,10 @@ function beginWork(
     `Unknown unit of work tag (${workInProgress.tag}). This error is likely caused by a bug in ` +
       'React. Please file an issue.',
   );
+
+  beginWorkLog===0&&console.log("【beginWork结束】");
+  beginWorkLog=1
+
 }
 
 export {beginWork};

@@ -587,12 +587,12 @@ const performWorkUntilDeadline = () => {
     // `hasMoreWork` will remain true, and we'll continue the work loop.
     let hasMoreWork = true;
     try {
-      console.log("【workLoop中间】执行挂载在scheduledHostCallback上的实际是flushWork函数");
+      console.log("【performWorkUntilDeadline】执行挂载在scheduledHostCallback上的实际是flushWork函数");
 
       // scheduledHostCallback为我们requestHostCallback传入的函数 flushwork，实则执行 workLoop
       hasMoreWork = scheduledHostCallback(hasTimeRemaining, currentTime);
     } finally {
-      // 表示是否还有任务需要执行，taskqueue不为空
+      // 表示是否还有任务需要执行，taskqueue不为空，
       if (hasMoreWork) {
         // If there's more work, schedule the next message event at the end
         // of the preceding one.

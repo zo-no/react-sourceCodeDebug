@@ -153,6 +153,7 @@ export function getRootHostContext(
   let type;
   let namespace;
   const nodeType = rootContainerInstance.nodeType;
+
   switch (nodeType) {
     case DOCUMENT_NODE:
     case DOCUMENT_FRAGMENT_NODE: {
@@ -249,6 +250,8 @@ export function createInstance(
   hostContext: HostContext,
   internalInstanceHandle: Object,
 ): Instance {
+  console.error("createInstance");
+
   let parentNamespace: string;
   if (__DEV__) {
     // TODO: take namespace into account when validating.
@@ -433,6 +436,8 @@ export function commitMount(
   // does to implement the `autoFocus` attribute on the client). But
   // there are also other cases when this might happen (such as patching
   // up text content during hydration mismatch). So we'll check this again.
+  console.log("调用commitMount，渲染真实DOM");
+
   switch (type) {
     case 'button':
     case 'input':
@@ -575,6 +580,8 @@ export function removeChild(
   parentInstance: Instance,
   child: Instance | TextInstance | SuspenseInstance,
 ): void {
+  console.log("【真实dom】调用removeChild");
+
   parentInstance.removeChild(child);
 }
 
