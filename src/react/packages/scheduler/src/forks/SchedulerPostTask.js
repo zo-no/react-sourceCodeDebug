@@ -52,6 +52,7 @@ export const unstable_now = getCurrentTime;
 // thread, like user events. By default, it yields multiple times per frame.
 // It does not attempt to align with frame boundaries, since most tasks don't
 // need to be frame aligned; for those that do, use requestAnimationFrame.
+/** @desc 在浏览器每一帧的时间中，预留一些时间给 JS 线程，React利用这部分时间更新组件（可以看到，在源码中，预留的初始时间是 5ms）。 */
 const yieldInterval = 5;
 let deadline = 0;
 
@@ -124,6 +125,8 @@ function runTask<T>(
   node: CallbackNode,
   callback: SchedulerCallback<T>,
 ) {
+  console.error(1233211234567);
+  
   deadline = getCurrentTime() + yieldInterval;
   try {
     currentPriorityLevel_DEPRECATED = priorityLevel;

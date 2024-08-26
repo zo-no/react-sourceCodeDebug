@@ -53,7 +53,8 @@ Component.prototype.isReactComponent = {};
  * @final
  * @protected
  */
-Component.prototype.setState = function(partialState, callback) {
+Component.prototype.setState = function (partialState, callback) {
+  console.log("setState的实现位置，可以强制更新页面");
   if (
     typeof partialState !== 'object' &&
     typeof partialState !== 'function' &&
@@ -82,7 +83,9 @@ Component.prototype.setState = function(partialState, callback) {
  * @final
  * @protected
  */
-Component.prototype.forceUpdate = function(callback) {
+Component.prototype.forceUpdate = function (callback) {
+  console.log("强制更新页面");
+  
   this.updater.enqueueForceUpdate(this, callback, 'forceUpdate');
 };
 
