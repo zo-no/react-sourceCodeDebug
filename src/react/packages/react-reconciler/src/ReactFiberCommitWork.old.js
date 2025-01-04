@@ -2154,6 +2154,7 @@ function commitResetTextContent(current: Fiber) {
   resetTextContent(current.stateNode);
 }
 
+/** @desc Mutation阶段 */
 export function commitMutationEffects(
   root: FiberRoot,
   firstChild: Fiber,
@@ -2169,6 +2170,7 @@ export function commitMutationEffects(
   inProgressRoot = null;
 }
 
+/** @desc Mutation阶段 */
 function commitMutationEffects_begin(root: FiberRoot, lanes: Lanes) {
   while (nextEffect !== null) {
     const fiber = nextEffect;
@@ -2197,7 +2199,8 @@ function commitMutationEffects_begin(root: FiberRoot, lanes: Lanes) {
     }
   }
 }
-// 
+
+/** @desc Mutation阶段 */
 function commitMutationEffects_complete(root: FiberRoot, lanes: Lanes) {
   while (nextEffect !== null) {
     const fiber = nextEffect;
@@ -2221,6 +2224,7 @@ function commitMutationEffects_complete(root: FiberRoot, lanes: Lanes) {
     nextEffect = fiber.return;
   }
 }
+
 // 这里是执行dom突变的主要函数会根据fiber的flags进行不同的处理
 function commitMutationEffectsOnFiber(
   finishedWork: Fiber,

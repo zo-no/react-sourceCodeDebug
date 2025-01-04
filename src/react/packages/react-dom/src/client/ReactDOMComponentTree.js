@@ -199,6 +199,7 @@ export function getFiberCurrentPropsFromNode(
   return (node: any)[internalPropsKey] || null;
 }
 
+/** @desc  */
 export function updateFiberProps(
   node: Instance | TextInstance | SuspenseInstance,
   props: Props,

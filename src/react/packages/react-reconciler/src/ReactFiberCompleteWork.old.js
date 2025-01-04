@@ -224,6 +224,7 @@ if (supportsMutation) {
     // children to find all the terminal nodes.
     let node = workInProgress.child;
     while (node !== null) {
+      // 向下遍历，对第一层DOM元素执行appendChild
       if (node.tag === HostComponent || node.tag === HostText) {
         appendInitialChild(parent, node.stateNode);
       } else if (node.tag === HostPortal) {
@@ -231,19 +232,25 @@ if (supportsMutation) {
         // down its children. Instead, we'll get insertions from each child in
         // the portal directly.
       } else if (node.child !== null) {
+        //继续向下遍历，直到找到第一层的Dom元素类型
         node.child.return = node;
         node = node.child;
         continue;
       }
+
+      // 终止情况1：遍历到parent对应FiberNode
       if (node === workInProgress) {
         return;
       }
+      //如果没有兄弟fiberNode，则向父fiberNode遍历
       while (node.sibling === null) {
+        // 终止情况2:回到最初执行步骤1所在层
         if (node.return === null || node.return === workInProgress) {
           return;
         }
         node = node.return;
       }
+      //对兄弟fiberNode执行步骤1
       node.sibling.return = node.return;
       node = node.sibling;
     }
@@ -839,6 +846,9 @@ function completeWork(
   // to the current tree provider fiber is just as fast and less error-prone.
   // Ideally we would have a special version of the work loop only
   // for hydration.
+  console.error("【completeWork】");
+  
+  // 
   popTreeContext(workInProgress);
   switch (workInProgress.tag) {
     case IndeterminateComponent:
@@ -1007,6 +1017,7 @@ function completeWork(
           // (eg DOM renderer supports auto-focus for certain elements).
           // Make sure such renderers get scheduled for later work.
           if (
+            // 出生化属性
             finalizeInitialChildren(
               instance,
               type,

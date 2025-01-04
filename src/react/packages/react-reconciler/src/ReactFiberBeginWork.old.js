@@ -291,6 +291,8 @@ export function reconcileChildren(
   nextChildren: any,
   renderLanes: Lanes,
 ) {
+  // 判断是挂载阶段还是更新阶段
+  /** @desc 都是ChildReconciler的返回值 */
   if (current === null) {
     // If this is a fresh new component that hasn't been rendered yet, we
     // won't update its child set by applying minimal side-effects. Instead,
@@ -1441,6 +1443,7 @@ function updateHostRoot(current, workInProgress, renderLanes) {
     // already hydrated.
     resetHydrationState();
     if (nextChildren === prevChildren) {
+      // 如果下一个等于上一个就跳过
       return bailoutOnAlreadyFinishedWork(current, workInProgress, renderLanes);
     }
     // diff算法入口
@@ -3800,7 +3803,7 @@ function beginWork(
       );
     }
   }
-  beginWorkLog===0&&console.error('【beginWork】当前beginwork的渲染优先级以及current tree 和workInProgress tree',renderLanes, current, workInProgress)
+  console.error('【beginWork】当前beginwork的渲染优先级以及current tree 和workInProgress tree',renderLanes, current, workInProgress)
 
   if (current !== null) {
     beginWorkLog===0&&console.log('【beginWork】current不为空******************************')

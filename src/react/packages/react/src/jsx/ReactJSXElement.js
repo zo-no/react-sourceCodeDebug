@@ -24,10 +24,12 @@ let specialPropKeyWarningShown;
 let specialPropRefWarningShown;
 let didWarnAboutStringRefs;
 
+// 开发模式
 if (__DEV__) {
   didWarnAboutStringRefs = {};
 }
 
+/** @des 检查 config 对象有无有效 ref 属性。*/
 function hasValidRef(config) {
   if (__DEV__) {
     if (hasOwnProperty.call(config, 'ref')) {
@@ -40,6 +42,7 @@ function hasValidRef(config) {
   return config.ref !== undefined;
 }
 
+/** @des 检查 config 对象有无有效 Key 属性。*/
 function hasValidKey(config) {
   if (__DEV__) {
     if (hasOwnProperty.call(config, 'key')) {
@@ -52,6 +55,7 @@ function hasValidKey(config) {
   return config.key !== undefined;
 }
 
+/** @des 在字符串 ref 以无法自动转换为箭头函数的方式使用时发出警告。*/
 function warnIfStringRefCannotBeAutoConverted(config, self) {
   if (__DEV__) {
     if (
@@ -81,6 +85,7 @@ function warnIfStringRefCannotBeAutoConverted(config, self) {
   }
 }
 
+/** @des 警告可以跳过*/
 function defineKeyPropWarningGetter(props, displayName) {
   if (__DEV__) {
     const warnAboutAccessingKey = function() {
@@ -103,6 +108,7 @@ function defineKeyPropWarningGetter(props, displayName) {
   }
 }
 
+/** @des 警告可以跳过*/
 function defineRefPropWarningGetter(props, displayName) {
   if (__DEV__) {
     const warnAboutAccessingRef = function() {
@@ -125,6 +131,8 @@ function defineRefPropWarningGetter(props, displayName) {
   }
 }
 
+
+/** @des 中文理解：一个工厂方法，用于创建 React 元素。*/
 /**
  * Factory method to create a new React element. This no longer adheres to
  * the class pattern, so do not use new to call it. Also, instanceof check

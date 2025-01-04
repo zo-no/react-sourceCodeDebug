@@ -206,6 +206,7 @@ type BaseFiberRootProperties = {|
   pingCache: WeakMap<Wakeable, Set<mixed>> | Map<Wakeable, Set<mixed>> | null,
 
   // A finished work-in-progress HostRoot that's ready to be committed.
+  /** @desc WipHostRootFiber，”render阶段构建的Wip Fiber Tree 的 HostRootFiber“ */
   finishedWork: Fiber | null,
   // Timeout handle returned by setTimeout. Used to cancel a pending timeout, if
   // it's superseded by a new one.

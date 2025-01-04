@@ -321,6 +321,7 @@ function safelyCallDestroy(
 let focusedInstanceHandle: null | Fiber = null;
 let shouldFireAfterActiveInstanceBlur: boolean = false;
 
+/** @desc BeforeMutation阶段 */
 export function commitBeforeMutationEffects(// dom改变之前
   root: FiberRoot,
   firstChild: Fiber,
@@ -338,6 +339,7 @@ export function commitBeforeMutationEffects(// dom改变之前
   return shouldFire;
 }
 
+/** @desc BeforeMutation阶段 */
 function commitBeforeMutationEffects_begin() {
   while (nextEffect !== null) {
     const fiber = nextEffect;
@@ -368,6 +370,7 @@ function commitBeforeMutationEffects_begin() {
   }
 }
 
+/** @desc BeforeMutation阶段 */
 function commitBeforeMutationEffects_complete() {
   while (nextEffect !== null) {
     const fiber = nextEffect;
@@ -2344,6 +2347,7 @@ function commitMutationEffectsOnFiber(
   }
 }
 
+/** @desc Layout阶段 */
 export function commitLayoutEffects(
   finishedWork: Fiber,
   root: FiberRoot,
@@ -2359,6 +2363,7 @@ export function commitLayoutEffects(
   inProgressRoot = null;
 }
 
+/** @desc Layout阶段 */
 function commitLayoutEffects_begin(
   subtreeRoot: Fiber,
   root: FiberRoot,
@@ -2433,6 +2438,7 @@ function commitLayoutEffects_begin(
   }
 }
 
+/** @desc Layout阶段 */
 function commitLayoutMountEffects_complete(
   subtreeRoot: Fiber,
   root: FiberRoot,

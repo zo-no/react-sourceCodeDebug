@@ -2065,10 +2065,15 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
   }
 }
 
-/** @desc 提交阶段 */
+/** 
+ * @desc 提交阶段
+ * @param {FiberRoot} root 本次更新所属的FiberRootNode
+ */
 function commitRoot(root: FiberRoot, recoverableErrors: null | Array<mixed>) {
   // TODO: This no longer makes any sense. We already wrap the mutation and
   // layout phases. Should be able to remove.
+  console.log("开始commit阶段");
+  
   const previousUpdateLanePriority = getCurrentUpdatePriority();
   const prevTransition = ReactCurrentBatchConfig.transition;
 

@@ -367,6 +367,7 @@ function updateDOMProperties(
   }
 }
 
+/** @desc 创建真实DOM */
 export function createElement(
   type: string,
   props: Object,
@@ -607,6 +608,7 @@ export function setInitialProperties(
   }
 }
 
+// diff 的具体流程
 // Calculate the diff between the two objects.
 export function diffProperties(
   domElement: Element,
@@ -618,10 +620,11 @@ export function diffProperties(
   if (__DEV__) {
     validatePropertiesInDevelopment(tag, nextRawProps);
   }
-
+  /** @desc 保存变化属性的Key、Value */
   let updatePayload: null | Array<any> = null;
-
+  /** @desc 更新前的属性 */
   let lastProps: Object;
+  /** @desc 更新后的属性 */
   let nextProps: Object;
   switch (tag) {
     case 'input':
@@ -657,6 +660,7 @@ export function diffProperties(
   let propKey;
   let styleName;
   let styleUpdates = null;
+  // 标记删除“更新前有、更新后没有”的属性
   for (propKey in lastProps) {
     if (
       nextProps.hasOwnProperty(propKey) ||
@@ -665,8 +669,10 @@ export function diffProperties(
     ) {
       continue;
     }
+    // 处理style
     if (propKey === STYLE) {
       const lastStyle = lastProps[propKey];
+      // 
       for (styleName in lastStyle) {
         if (lastStyle.hasOwnProperty(styleName)) {
           if (!styleUpdates) {
@@ -676,6 +682,7 @@ export function diffProperties(
         }
       }
     } else if (propKey === DANGEROUSLY_SET_INNER_HTML || propKey === CHILDREN) {
+      // 处理innerHTML、处理单一文本类型的children
       // Noop. This is handled by the clear text mechanism.
     } else if (
       propKey === SUPPRESS_CONTENT_EDITABLE_WARNING ||
@@ -685,6 +692,7 @@ export function diffProperties(
     } else if (propKey === AUTOFOCUS) {
       // Noop. It doesn't work on updates anyway.
     } else if (registrationNameDependencies.hasOwnProperty(propKey)) {
+      // 处理onScroll事件
       // This is a special case. If any listener updates we need to ensure
       // that the "current" fiber pointer gets updated so we need a commit
       // to update this element.
@@ -692,11 +700,13 @@ export function diffProperties(
         updatePayload = [];
       }
     } else {
+      // 其他属性
       // For all other deleted properties we add it to the queue. We use
       // the allowed property list in the commit phase instead.
       (updatePayload = updatePayload || []).push(propKey, null);
     }
   }
+  // 标记更新“update流程前后发生改变”的属性
   for (propKey in nextProps) {
     const nextProp = nextProps[propKey];
     const lastProp = lastProps != null ? lastProps[propKey] : undefined;

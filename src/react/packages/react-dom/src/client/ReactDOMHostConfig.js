@@ -243,6 +243,7 @@ export function resetAfterCommit(containerInfo: Container): void {
   selectionInformation = null;
 }
 
+/** @desc 创建“fiberNode”对应的Dom元素 */
 export function createInstance(
   type: string,
   props: Props,
@@ -272,6 +273,7 @@ export function createInstance(
   } else {
     parentNamespace = ((hostContext: any): HostContextProd);
   }
+  /** @desc 创建真实DOM */
   const domElement: Instance = createElement(
     type,
     props,
@@ -290,6 +292,7 @@ export function appendInitialChild(
   parentInstance.appendChild(child);
 }
 
+/** @desc 初始化属性 */
 export function finalizeInitialChildren(
   domElement: Instance,
   type: string,
